@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery | Digital Hostel</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg,#ffffff, #ffffff);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 40px 0 20px;
+            font-size: 2.5rem;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+            animation: fadeInDown 1.5s;
+        }
+
+        .upload-form {
+            max-width: 500px;
+            margin: 20px auto;
+            background: rgba(255,255,255,0.15);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            backdrop-filter: blur(12px);
+            animation: fadeIn 2s;
+        }
+
+        .upload-form input[type="file"] {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+        }
+
+        .upload-form .btn {
+            background: linear-gradient(90deg, #ff512f, #dd2476);
+            border: none;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+            border-radius: 12px;
+        }
+
+        .upload-form .btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #dd2476, #ff512f);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            animation: fadeInUp 1.5s;
+        }
+
+        .gallery img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 35px rgba(255,255,255,0.3);
+        }
+
+        .btn-dashboard {
+            display: block;
+            width: fit-content;
+            margin: 30px auto;
+            background: linear-gradient(90deg, #43cea2, #185a9d);
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        .btn-dashboard:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #185a9d, #43cea2);
+        }
+
+        footer {
+            background: rgba(0,0,0,0.2);
+            color: #eee;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        /* Lightbox styling */
+        #lightbox {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #lightbox img {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        #lightbox:target {
+            display: flex;
+        }
+
+        @keyframes fadeInDown {
+            0% {opacity: 0; transform: translateY(-30px);}
+            100% {opacity: 1; transform: translateY(0);}
+        }
+
+        @keyframes fadeInUp {
+            0% {opacity: 0; transform: translateY(30px);}
+            100% {opacity: 1; transform: translateY(0);}
+        }
+
+        @keyframes fadeIn {
+            0% {opacity: 0;}
+            100% {opacity: 1;}
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🖼️ ফটো গ্যালারি</h1>
+
+    <!-- Upload Form -->
+    <div class="upload-form">
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="photo" class="form-control mb-3" required>
+            <button type="submit" class="btn w-100"><i class="fas fa-cloud-upload-alt me-2"></i>ছবি আপলোড করুন</button>
+        </form>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery container">
+        {% for photo in photos %}
+        <a href="#lightbox" onclick="openLightbox('{{ url_for('static', filename='gallery/' + photo) }}')">
+            <img src="{{ url_for('static', filename='gallery/' + photo) }}" alt="Photo">
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="">
+    </div>
+
+    <!-- Dashboard Button -->
+    <a href="/dashboard" class="btn btn-dashboard"><i class="fas fa-arrow-left me-2"></i>Dashboard-এ ফিরে যান</a>
+
+    <!-- Footer -->
+    <footer>
+        © 2025 Bhola Polytechnic Institute | Digital Hostel
+    </footer>
+
+    <script>
+        function openLightbox(src) {
+            document.getElementById("lightbox-img").src = src;
+            document.getElementById("lightbox").style.display = "flex";
+        }
+        function closeLightbox() {
+            document.getElementById("lightbox").style.display = "none";
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Digital Hostel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #89f7fe, #66a6ff);
+            font-family: "Noto Sans Bengali", sans-serif;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            margin-top: 40px;
+        }
+        h2 {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .table thead {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-danger {
+            border-radius: 10px;
+        }
+        .card {
+            background: linear-gradient(145deg, #ffffff, #e6f0ff);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .btn-logout {
+            background-color: #ff6b6b;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+        }
+        .btn-logout:hover {
+            background-color: #e84141;
+        }
+        .add-form {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .card img {
+            border-radius: 10px 10px 0 0;
+        }
+        .section-title {
+            color: #343a40;
+            margin-top: 30px;
+            font-weight: 700;
+            border-bottom: 3px solid #007bff;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🛠️ Admin Dashboard</h2>
+        <a href="{{ url_for('admin_logout') }}" class="btn-logout">Logout</a>
+    </div>
+
+    <!-- 🏠 রুম যুক্ত করুন -->
+    <h4 class="section-title">🏠 রুম যুক্ত করুন</h4>
+    <form class="add-form mb-4" method="POST" action="{{ url_for('add_room') }}" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-md-4"><input type="text" name="room_number" class="form-control" placeholder="রুম নম্বর" required></div>
+            <div class="col-md-4"><input type="text" name="room_type" class="form-control" placeholder="রুমের ধরন" required></div>
+            <div class="col-md-4"><input type="text" name="price" class="form-control" placeholder="ভাড়া (৳)" required></div>
+            <div class="col-md-4"><input type="text" name="capacity" class="form-control" placeholder="কতজন থাকতে পারবে" required></div>
+            <div class="col-md-8"><input type="text" name="description" class="form-control" placeholder="রুমের বিবরণ" required></div>
+            <div class="col-md-12"><input type="file" name="image" class="form-control"></div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">➕ রুম যোগ করুন</button>
+    </form>
+
+
+     <div class="card">
+        <h3>👥 Registered Users</h3>
+        <table class="table table-bordered table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Phone</th>
+                    <th>Gmail</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.gmail }}</td>
+                    <td>
+                        <a href="{{ url_for('admin_delete_user', user_id=user.id) }}" class="btn-delete">🗑️ Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+    <h3>🗣️ Student Reviews</h3>
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Rating</th>
+                <th>Review</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+                <td>{{ review.id }}</td>
+                <td>{{ review.name }}</td>
+                <td>{{ review.rating }}</td>
+                <td>{{ review.review }}</td>
+                <td>{{ review.created_at }}</td>
+                <td>
+                    <a href="{{ url_for('admin_delete_review', review_id=review.id) }}" class="btn btn-danger btn-sm">🗑️ Delete</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">কোনো review পাওয়া যায়নি 😔</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+    <!-- 📝 রুম আবেদন তালিকা -->
+    <h4 class="section-title mt-5">📝 রুম আবেদন তালিকা</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr class="text-center">
+                    <th>নাম</th>
+                    <th>পিতার নাম</th>
+                    <th>মাতার নাম</th>
+                    <th>রুম নং</th>
+                    <th>ঠিকানা</th>
+                    <th>জন্মতারিখ</th>
+                    <th>সেশন</th>
+                    <th>সেমিস্টার</th>
+                    <th>শিফট</th>
+                    <th>রক্তের গ্রুপ</th>
+                    <th>ডিপার্টমেন্ট</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for apply in applications %}
+                <tr>
+                    <td>{{ apply.username or "Unknown" }}</td>
+                    <td>{{ apply.father_name }}</td>
+                    <td>{{ apply.mother_name }}</td>
+                    <td>{{ apply.present_address }}</td>
+                    <td> স্থায়ী: {{ apply.permanent_address }}</td>
+                    <td>{{ apply.birth_date }}</td>
+                    <td>{{ apply.session_name }}</td>
+                    <td>{{ apply.semester }}</td>
+                    <td>{{ apply.shift }}</td>
+                    <td>{{ apply.blood_group }}</td>
+                    <td>{{ apply.department }}</td>
+                    <td class="text-center">
+                        <a href="{{ url_for('delete_application', app_id=apply.id) }}" class="btn btn-danger btn-sm">🗑️ মুছুন</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="11" class="text-center text-muted">কোনো আবেদন পাওয়া যায়নি 😔</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+     <!-- 🏘️ সকল রুম -->
+    <h4 class="section-title">🏘️ সকল রুম</h4>
+    <div class="row">
+        {% for room in rooms %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                {% if room.image %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ room.image) }}" class="card-img-top" alt="Room Image">
+                {% else %}
+                    <img src="{{ url_for('static', filename='default-room.jpg') }}" class="card-img-top" alt="Default Room">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">রুম {{ room.room_number }} - {{ room.room_type }}</h5>
+                    <p>💰 ভাড়া: {{ room.price }}</p>
+                    <p>👥 ধারণক্ষমতা: {{ room.capacity }}</p>
+                    <p>{{ room.description }}</p>
+                    <a href="{{ url_for('delete_room', room_id=room.id) }}" class="btn btn-danger btn-sm">🗑️ মুছুন</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+</body>
+</html>

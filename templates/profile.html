@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.username }}'s Profile | Digital Hostel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #999a9b, #a1c4fd);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #0fec98, #0ef82d);
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(248, 24, 24, 0.2);
+            max-width:device-width;
+            width: 90%;
+            margin: 30px auto;
+            text-align: center;
+            padding: 25px;
+            animation: fadeIn 1s ease;
+        }
+
+        .profile-card img {
+            border-radius: 35%;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 5px solid #ff0000;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .info {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .info p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .btn-back {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px;
+            padding: 10px 20px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Review Section */
+        .review-card {
+            background: rgba(252, 252, 252, 0.15);
+            border-radius: 15px;
+            padding:5px;
+            margin-bottom: 15px;
+            color: #000000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .review-card h5 {
+            margin-bottom: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-card">
+        {% if user.profile_picture %}
+            <img src="{{ url_for('static', filename='uploads/' ~ user.profile_picture) }}" alt="Profile Picture">
+        {% else %}
+            <img src="{{ url_for('static', filename='default-avatar.png') }}" alt="Default Avatar">
+        {% endif %}
+
+        <h3>{{ user.username }}</h3>
+        <hr>
+        <div class="info">
+            <p>📞 <b>ফোন:</b> {{ user.phone }}</p>
+            <p>📧 <b>ইমেইল:</b> {{ user.gmail }}</p>
+            <p>🎓 <b>রোল:</b> {{ user.roll }}</p>
+            <p>🆔 <b>রেজিস্ট্রেশন নং:</b> {{ user.registration_no }}</p>
+        </div>
+
+        <a href="{{ url_for('dashboard') }}" class="btn btn-back mt-3">⬅ ড্যাশবোর্ডে ফিরে যান</a>
+
+        <!-- User Reviews -->
+        <h4 class="mt-4">✨ {{ user.username }}-এর রিভিউ</h4>
+        <div class="mt-3">
+            {% if user_reviews %}
+                {% for review in user_reviews %}
+                    <div class="review-card">
+                        <h5>⭐ রেটিং: {{ review['rating'] }}/5</h5>
+                        <p>{{ review['review'] }}</p>
+                        <small>🕒 {{ review['created_at'] }}</small>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>এই ইউজারের কোনো রিভিউ নেই।</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
